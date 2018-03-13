@@ -166,26 +166,6 @@ defaultDisplayOptions =
     False           -- displayOptions_openGLDebugContext      = False
     DefaultProfile  -- displayOptions_openGLProfile           = DefaultProfile
 
-public export
-CharCallback : Type 
-CharCallback = Char -> Bool -> IO ()
-
-public export
-KeyCallback : Type
-KeyCallback = GLFWKey -> Bool -> IO ()
-
-public export
-MouseButtonCallback : Type
-MouseButtonCallback = GLFWMouseButton -> Bool -> IO ()
-
-public export
-MousePositionCallback : Type
-MousePositionCallback = Int -> Int -> IO ()
-
-public export
-MouseWheelCallback : Type
-MouseWheelCallback  = Int -> IO ()
-
 export
 initialize : IO Bool
 initialize = do
@@ -217,13 +197,13 @@ getGlfwVersion = do
   pure (maj, min, rev)
 
 export
-closeWindow : IO ()
-closeWindow
-  = foreign FFI_C "glfwDestroyWindow" (IO ())
+destroyWindow : Window -> IO ()
+destroyWindow win
+  = foreign FFI_C "glfwDestroyWindow" (Window -> IO ()) win
 
 export
-openWindow : String -> DisplayOptions -> IO Window
-openWindow title disp = do
+createWindow : String -> DisplayOptions -> IO Window
+createWindow title disp = do
 {-
   displayOptions_width                   : Int
   displayOptions_height                  : Int
@@ -346,25 +326,55 @@ setWindowSizeCallback win clbkPtr = do
   _ <- foreign FFI_C "glfwSetWindowSizeCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
   pure ()
 
-export
-setKeyCallback : KeyCallback -> IO ()
-setKeyCallback clbk = ?setKeyCallback
+public export
+KeyCallback : Type
+KeyCallback = Window -> Int -> Int -> Int -> Int -> ()
 
 export
-setCharCallback : CharCallback -> IO ()
-setCharCallback clbk = ?setCharCallback
+setKeyCallback : Window -> Ptr -> IO ()
+setKeyCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetKeyCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
+
+public export
+CharCallback : Type 
+CharCallback = Window -> Char -> ()
 
 export
-setMouseButtonCallback : MouseButtonCallback -> IO ()
-setMouseButtonCallback clbk = ?setMouseButtonCallback
+setCharCallback : Window -> Ptr -> IO ()
+setCharCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetCharCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
+
+public export
+MouseButtonCallback : Type
+MouseButtonCallback = Window -> Int -> Int -> Int -> ()
 
 export
-setMouseWheelCallback : MouseWheelCallback -> IO ()
-setMouseWheelCallback clbk = ?setMouseWheelCallback
+setMouseButtonCallback : Window -> Ptr -> IO ()
+setMouseButtonCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetMouseButtonCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
+
+public export
+MouseWheelCallback : Type
+MouseWheelCallback  = Window -> Double -> Double -> ()
 
 export
-setMousePositionCallback : MousePositionCallback -> IO ()
-setMousePositionCallback clbk = ?setMousePositionCallback
+setMouseWheelCallback : Window -> Ptr -> IO ()
+setMouseWheelCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetScrollCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
+
+public export
+MousePositionCallback : Type
+MousePositionCallback = Window -> Double -> Double -> ()
+
+export
+setMousePositionCallback : Window -> Ptr -> IO ()
+setMousePositionCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetCursorPosCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
 
 export
 windowIsOpen : Window -> IO Bool
