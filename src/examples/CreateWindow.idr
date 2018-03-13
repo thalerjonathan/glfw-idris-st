@@ -63,12 +63,23 @@ createWindowTest = do
 
     keyCallback : KeyCallback
     keyCallback win' key scancode action mods = unsafePerformIO $ do 
-      putStrLn "keyCallback"
-      putStrLn $ "key = " ++ show key ++
-                 " scancode = " ++ show scancode ++
-                 " action = " ++ show action ++
-                 " action = " ++ show mods
-      pure ()
+        putStrLn "keyCallback"
+        putStrLn $ "key = " ++ show key ++
+                  " scancode = " ++ show scancode ++
+                  " action = " ++ show action ++
+                  " action = " ++ show mods
+
+        let mglfwKey = GLFW.glfwKeyFromInt key
+        let mglfwAct = GLFW.glfwKeyActionFromInt action
+        keyCallbackAux mglfwKey mglfwAct
+      where
+          keyCallbackAux :  Maybe GLFWKey
+                         -> Maybe GLFWKeyAction
+                         -> IO ()
+          keyCallbackAux (Just glfwKey) (Just Press)   = putStrLn "Press Key"
+          keyCallbackAux (Just glfwKey) (Just Release) = putStrLn "Release Key"
+          keyCallbackAux (Just glfwKey) (Just Repeat) = putStrLn "Repeat Key"
+          keyCallbackAux _ _ = putStrLn "Unknown key / action"
 
     keyCallbackPtr : IO Ptr
     keyCallbackPtr = foreign FFI_C "%wrapper" (CFnPtr KeyCallback -> IO Ptr) (MkCFnPtr keyCallback)
@@ -84,11 +95,22 @@ createWindowTest = do
 
     mouseButtonCallback : MouseButtonCallback
     mouseButtonCallback win' button action mods = unsafePerformIO $ do 
-      putStrLn "mouseButtonCallback"
-      putStrLn $ "button = " ++ show button ++
-                 " action = " ++ show action ++
-                 " mods = " ++ show mods
-      pure ()
+        putStrLn "mouseButtonCallback"
+        putStrLn $ "button = " ++ show button ++
+                  " action = " ++ show action ++
+                  " mods = " ++ show mods
+
+        let mglfwMb = GLFW.glfwMouseButtonFromInt button
+        let mglfwAct = GLFW.glfwKeyActionFromInt action
+        mouseButtonCallbackAux mglfwMb mglfwAct
+      where
+        mouseButtonCallbackAux :  Maybe GLFWMouseButton
+                               -> Maybe GLFWKeyAction
+                               -> IO ()
+        mouseButtonCallbackAux (Just glfwMb) (Just Press)   = putStrLn "Press MouseButton"
+        mouseButtonCallbackAux (Just glfwMb) (Just Release) = putStrLn "Release MouseButton"
+        mouseButtonCallbackAux (Just glfwMb) (Just Repeat) = putStrLn "Repeat MouseButton"
+        mouseButtonCallbackAux _ _ = putStrLn "Unknown MouseButton / Action"
 
     mouseButtonCallbackPtr : IO Ptr
     mouseButtonCallbackPtr = foreign FFI_C "%wrapper" (CFnPtr MouseButtonCallback -> IO Ptr) (MkCFnPtr mouseButtonCallback)

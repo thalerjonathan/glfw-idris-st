@@ -135,9 +135,175 @@ data GLFWKey
   | KeyPadEnter
 
 public export
+data GLFWKeyAction
+  = Press
+  | Release
+  | Repeat
+
+public export
+data GLFWKeyModifier
+  = Shift
+  | Control
+  | Alt
+  | Super
+
+public export
 data GLFWMouseButton
-  = MouseButton0 | MouseButton1 | MouseButton2 | MouseButton3
-  | MouseButton4 | MouseButton5 | MouseButton6 | MouseButton7
+  = MouseButton1 | MouseButton2 | MouseButton3 | MouseButton4
+  | MouseButton5 | MouseButton6 | MouseButton7 | MouseButton8
+
+export
+glfwKeyFromInt : Int -> Maybe GLFWKey
+--glfwKeyFromInt (-1) = Just KeyUnknown
+glfwKeyFromInt 32 = Just KeySpace
+-- #define 	GLFW_KEY_APOSTROPHE   39 /* ' */
+-- #define 	GLFW_KEY_COMMA   44 /* , */
+-- #define 	GLFW_KEY_MINUS   45 /* - */
+-- #define 	GLFW_KEY_PERIOD   46 /* . */ 
+-- #define 	GLFW_KEY_SLASH   47 /* / */
+-- glfwKeyFromInt 48 = Just KeyPad0
+-- glfwKeyFromInt 49 = Just KeyPad1
+-- glfwKeyFromInt 50 = Just KeyPad2
+-- glfwKeyFromInt 51 = Just KeyPad3
+-- glfwKeyFromInt 52 = Just KeyPad4
+-- glfwKeyFromInt 53 = Just KeyPad5
+-- glfwKeyFromInt 54 = Just KeyPad6
+-- glfwKeyFromInt 55 = Just KeyPad7
+-- glfwKeyFromInt 56 = Just KeyPad8
+-- glfwKeyFromInt 57 = Just KeyPad9
+-- #define 	GLFW_KEY_SEMICOLON   59 /* ; */
+-- #define 	GLFW_KEY_EQUAL   61 /* = */
+glfwKeyFromInt 65 = Just $ CharKey 'a'
+glfwKeyFromInt 66 = Just $ CharKey 'b'
+glfwKeyFromInt 67 = Just $ CharKey 'c'
+glfwKeyFromInt 68 = Just $ CharKey 'd'
+glfwKeyFromInt 69 = Just $ CharKey 'e'
+glfwKeyFromInt 70 = Just $ CharKey 'f'
+glfwKeyFromInt 71 = Just $ CharKey 'g'
+glfwKeyFromInt 72 = Just $ CharKey 'h'
+glfwKeyFromInt 73 = Just $ CharKey 'i'
+glfwKeyFromInt 74 = Just $ CharKey 'j'
+glfwKeyFromInt 75 = Just $ CharKey 'k'
+glfwKeyFromInt 76 = Just $ CharKey 'l'
+glfwKeyFromInt 77 = Just $ CharKey 'm'
+glfwKeyFromInt 78 = Just $ CharKey 'n'
+glfwKeyFromInt 79 = Just $ CharKey 'o'
+glfwKeyFromInt 80 = Just $ CharKey 'p'
+glfwKeyFromInt 81 = Just $ CharKey 'q'
+glfwKeyFromInt 82 = Just $ CharKey 'r'
+glfwKeyFromInt 83 = Just $ CharKey 's'
+glfwKeyFromInt 84 = Just $ CharKey 't'
+glfwKeyFromInt 85 = Just $ CharKey 'u'
+glfwKeyFromInt 86 = Just $ CharKey 'v'
+glfwKeyFromInt 87 = Just $ CharKey 'w'
+glfwKeyFromInt 88 = Just $ CharKey 'x'
+glfwKeyFromInt 89 = Just $ CharKey 'y'
+glfwKeyFromInt 90 = Just $ CharKey 'z'
+-- #define 	GLFW_KEY_LEFT_BRACKET   91 /* [ */
+-- #define 	GLFW_KEY_BACKSLASH   92 /* \ */
+-- #define 	GLFW_KEY_RIGHT_BRACKET   93 /* ] */
+-- #define 	GLFW_KEY_GRAVE_ACCENT   96 /* ` */
+-- #define 	GLFW_KEY_WORLD_1   161 /* non-US #1 */
+-- #define 	GLFW_KEY_WORLD_2   162 /* non-US #2 */
+glfwKeyFromInt 256 = Just KeyEsc
+glfwKeyFromInt 257 = Just KeyEnter
+glfwKeyFromInt 258 = Just KeyTab
+glfwKeyFromInt 259 = Just KeyBackspace
+glfwKeyFromInt 260 = Just KeyInsert
+glfwKeyFromInt 261 = Just KeyDel
+glfwKeyFromInt 262 = Just KeyRight
+glfwKeyFromInt 263 = Just KeyLeft
+glfwKeyFromInt 264 = Just KeyDown
+glfwKeyFromInt 265 = Just KeyUp
+glfwKeyFromInt 266 = Just KeyPageup
+glfwKeyFromInt 267 = Just KeyPagedown
+glfwKeyFromInt 268 = Just KeyHome
+glfwKeyFromInt 269 = Just KeyEnd
+-- #define 	GLFW_KEY_CAPS_LOCK   280
+-- #define 	GLFW_KEY_SCROLL_LOCK   281
+-- #define 	GLFW_KEY_NUM_LOCK   282
+-- #define 	GLFW_KEY_PRINT_SCREEN   283
+-- #define 	GLFW_KEY_PAUSE   284
+glfwKeyFromInt 290 = Just KeyF1
+glfwKeyFromInt 291 = Just KeyF2
+glfwKeyFromInt 292 = Just KeyF3
+glfwKeyFromInt 293 = Just KeyF4
+glfwKeyFromInt 294 = Just KeyF5
+glfwKeyFromInt 295 = Just KeyF6
+glfwKeyFromInt 296 = Just KeyF7
+glfwKeyFromInt 297 = Just KeyF8
+glfwKeyFromInt 298 = Just KeyF9
+glfwKeyFromInt 299 = Just KeyF10
+glfwKeyFromInt 300 = Just KeyF11
+glfwKeyFromInt 301 = Just KeyF12
+glfwKeyFromInt 302 = Just KeyF13
+glfwKeyFromInt 303 = Just KeyF14
+glfwKeyFromInt 304 = Just KeyF15
+glfwKeyFromInt 305 = Just KeyF16
+glfwKeyFromInt 306 = Just KeyF17
+glfwKeyFromInt 307 = Just KeyF18
+glfwKeyFromInt 308 = Just KeyF19
+glfwKeyFromInt 309 = Just KeyF20
+glfwKeyFromInt 310 = Just KeyF21
+glfwKeyFromInt 311 = Just KeyF22
+glfwKeyFromInt 312 = Just KeyF23
+glfwKeyFromInt 313 = Just KeyF24
+glfwKeyFromInt 314 = Just KeyF25
+ 
+glfwKeyFromInt 320 = Just KeyPad0
+glfwKeyFromInt 321 = Just KeyPad1
+glfwKeyFromInt 322 = Just KeyPad2
+glfwKeyFromInt 323 = Just KeyPad3
+glfwKeyFromInt 324 = Just KeyPad4
+glfwKeyFromInt 325 = Just KeyPad5
+glfwKeyFromInt 326 = Just KeyPad6
+glfwKeyFromInt 327 = Just KeyPad7
+glfwKeyFromInt 328 = Just KeyPad8
+glfwKeyFromInt 329 = Just KeyPad9
+glfwKeyFromInt 330 = Just KeyPadDecimal
+glfwKeyFromInt 331 = Just KeyPadDivide
+glfwKeyFromInt 332 = Just KeyPadMultiply
+glfwKeyFromInt 333 = Just KeyPadSubtract
+glfwKeyFromInt 334 = Just KeyPadAdd
+glfwKeyFromInt 335 = Just KeyPadEnter
+glfwKeyFromInt 336 = Just KeyPadEqual
+glfwKeyFromInt 340 = Just KeyLeftShift
+glfwKeyFromInt 341 = Just KeyLeftCtrl
+glfwKeyFromInt 342 = Just KeyLeftAlt
+-- #define 	GLFW_KEY_LEFT_SUPER   343
+glfwKeyFromInt 344 = Just KeyRightShift
+glfwKeyFromInt 345 = Just KeyRightCtrl
+glfwKeyFromInt 346 = Just KeyRightAlt
+-- #define 	GLFW_KEY_RIGHT_SUPER   347
+-- #define 	GLFW_KEY_MENU   348
+glfwKeyFromInt _ = Nothing
+
+export
+glfwKeyActionFromInt : Int -> Maybe GLFWKeyAction
+glfwKeyActionFromInt 0 = Just Release
+glfwKeyActionFromInt 1 = Just Press
+glfwKeyActionFromInt 2 = Just Repeat
+glfwKeyActionFromInt _ = Nothing
+
+export
+glfwKeyModifierFromInt : Int -> Maybe GLFWKeyModifier
+glfwKeyModifierFromInt 1 = Just Shift
+glfwKeyModifierFromInt 2 = Just Control
+glfwKeyModifierFromInt 4 = Just Alt
+glfwKeyModifierFromInt 8 = Just Super
+glfwKeyModifierFromInt _ = Nothing
+
+export
+glfwMouseButtonFromInt : Int -> Maybe GLFWMouseButton
+glfwMouseButtonFromInt 0 = Just MouseButton1
+glfwMouseButtonFromInt 1 = Just MouseButton2
+glfwMouseButtonFromInt 2 = Just MouseButton3
+glfwMouseButtonFromInt 3 = Just MouseButton4
+glfwMouseButtonFromInt 4 = Just MouseButton5
+glfwMouseButtonFromInt 5 = Just MouseButton6
+glfwMouseButtonFromInt 6 = Just MouseButton7
+glfwMouseButtonFromInt 7 = Just MouseButton8
+glfwMouseButtonFromInt _ = Nothing
 
 export
 defaultDisplayOptions : DisplayOptions
@@ -239,6 +405,8 @@ createWindow title disp = do
 
   win <- foreign FFI_C "glfwCreateWindow" (Int -> Int -> String -> Ptr -> Ptr -> IO Ptr) width height title monitor null
 
+  -- TODO: set other parameters
+
   pure win
 
 export
@@ -283,7 +451,7 @@ getWindowDimensions win = do
 
 export
 getWindowValue : WindowValue -> IO Int
-getWindowValue wv = ?getWindowValue
+getWindowValue wv = pure 42 -- TODO: implement ?getWindowValue
 
 public export
 WindowCloseCallback : Type
