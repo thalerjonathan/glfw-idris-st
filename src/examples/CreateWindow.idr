@@ -23,12 +23,28 @@ createWindowTest = do
         GLFW.showMouseCursor win True
         GLFW.setSwapInterval 1
         
+        GLFW.setWindowCloseCallback 
+          win
+          !windowCloseCallbackPtr
+          
         pump win 5
 
         putStrLn "Shuting down GLFW..."
         GLFW.shutdown
 
   where
+    -- IO callbacks not (yet) suppored by Idris, need to use unsafePerformIO
+    windowCloseCallback : WindowCloseCallback
+    windowCloseCallback win' = unsafePerformIO $ do 
+      putStrLn "windowCloseCallback"
+      dims <- getWindowDimensions win'
+      putStrLn $ "WindowDimensions = " ++ show dims
+      pure ()
+  
+    -- unfortunately we need to pass the callback as a pointer...
+    windowCloseCallbackPtr : IO Ptr
+    windowCloseCallbackPtr = foreign FFI_C "%wrapper" (CFnPtr WindowCloseCallback -> IO Ptr) (MkCFnPtr windowCloseCallback)
+
     pump : GLFW.Window -> Double -> IO ()
     pump win sec = do
         t <- GLFW.getTime

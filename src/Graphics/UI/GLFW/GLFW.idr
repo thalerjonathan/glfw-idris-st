@@ -5,7 +5,7 @@ import Graphics.UI.GLFW.GlfwConfig
 
 %include C "GLFW/glfw3.h"
 
-export
+public export
 Window : Type
 Window = Ptr
 
@@ -167,14 +167,6 @@ defaultDisplayOptions =
     DefaultProfile  -- displayOptions_openGLProfile           = DefaultProfile
 
 public export
-WindowCloseCallback : Type
-WindowCloseCallback = IO Bool
-
-public export
-WindowSizeCallback : Type 
-WindowSizeCallback = Int -> Int -> IO ()
-
-public export
 CharCallback : Type 
 CharCallback = Char -> Bool -> IO ()
 
@@ -313,13 +305,46 @@ export
 getWindowValue : WindowValue -> IO Int
 getWindowValue wv = ?getWindowValue
 
+public export
+WindowCloseCallback : Type
+WindowCloseCallback = Window -> ()
+
+-- for some reason it is not possible to call an IO action which is
+-- passed as argument in a callback function, either because of
+-- idris or (more likely) because of GLFWs internal callback implementation 
+-- if one does as implemented below, the program will crash when clbk win' is called
+-- therefore we gotta pass the callback as raw ptr and the caller needs to
+-- ensure it is the correct type
+{-
 export
-setWindowCloseCallback : WindowCloseCallback -> IO ()
-setWindowCloseCallback clbk = ?setWindowCloseCallback
+setWindowCloseCallback : Window -> (Window -> IO Bool) -> IO ()
+setWindowCloseCallback win clbk = do
+    clbkPtr <- foreign FFI_C "%wrapper" (CFnPtr (Window -> ()) -> IO Ptr) (MkCFnPtr windowCloseCallbackPure)
+    foreign FFI_C "glfwSetWindowCloseCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+    pure ()
+
+  where
+    -- IO callbacks not (yet) suppored by Idris, need to use unsafePerformIO
+    windowCloseCallbackPure : Window -> ()
+    windowCloseCallbackPure win' = unsafePerformIO $ do 
+      _ <- clbk win'
+      pure ()
+-}
+export
+setWindowCloseCallback : Window -> Ptr -> IO ()
+setWindowCloseCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetWindowCloseCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
+
+public export
+WindowSizeCallback : Type 
+WindowSizeCallback = Window -> Int -> Int -> ()
 
 export
-setWindowSizeCallback : WindowSizeCallback -> IO ()
-setWindowSizeCallback clbk = ?setWindowSizeCallback
+setWindowSizeCallback : Window -> Ptr -> IO ()
+setWindowSizeCallback win clbkPtr = do
+  _ <- foreign FFI_C "glfwSetWindowSizeCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
+  pure ()
 
 export
 setKeyCallback : KeyCallback -> IO ()
