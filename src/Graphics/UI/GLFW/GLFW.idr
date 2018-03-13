@@ -9,6 +9,10 @@ export
 Window : Type
 Window = Ptr
 
+export
+NullWindow : Window
+NullWindow = null
+
 public export
 data DisplayMode
   = WindowMode
@@ -279,10 +283,15 @@ export
 setSwapInterval : Int -> IO ()
 setSwapInterval interval
   = foreign FFI_C "glfwSwapInterval" (Int -> IO ()) interval
-  
+
+-- #define GLFW_CURSOR_NORMAL   0x00034001
+-- #define GLFW_CURSOR_HIDDEN   0x00034002
+-- #define GLFW_CURSOR_DISABLED 0x00034003
+-- #define GLFW_CURSOR          0x00033001
 export
-enableMouseCursor : IO ()
-enableMouseCursor = ?enableMouseCursor
+showMouseCursor : Window -> Bool -> IO ()
+showMouseCursor win True  = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int -> IO ()) win 0x00033001 0x00034001 
+showMouseCursor win False = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int -> IO ()) win 0x00033001 0x00034002 
 
 export
 getWindowDimensions : Window -> IO (Int, Int)
@@ -333,9 +342,14 @@ setMousePositionCallback : MousePositionCallback -> IO ()
 setMousePositionCallback clbk = ?setMousePositionCallback
 
 export
-windowIsOpen : IO Bool
-windowIsOpen = ?windowIsOpen
+windowIsOpen : Window -> IO Bool
+windowIsOpen win = do
+  ret <- foreign FFI_C "glfwWindowShouldClose" (Ptr -> IO Int) win
+  pure $ if ret == 1 then False else True
 
+||| This function may only be called from the main thread.
+||| This function may not be called from a callback.
+||| On some platforms, certain callbacks may be called outside of a call to one of the event processing functions.
 export
 pollEvents : IO ()
 pollEvents 
@@ -348,8 +362,10 @@ swapBuffers win
 
 export
 sleep : Double -> IO ()
-sleep = ?sleep
+sleep secFract 
+  = sleepMillis (cast $ secFract * 1000)
 
 export
 getTime : IO Double
-getTime = ?getTime
+getTime 
+  = foreign FFI_C "glfwGetTime" (IO Double)

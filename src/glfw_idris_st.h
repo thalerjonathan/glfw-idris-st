@@ -7,4 +7,6 @@ int* allocIntArgPtr();
 void freeIntArgPtr(int*);
 int intPtrToValue(int*);
 
+void sleepMillis(unsigned int);
+
 #endif // __GL_GLFWIDRISST_H

@@ -20,20 +20,31 @@ createWindowTest = do
           , displayOptions_displayMode  = GLFW.WindowMode } GLFW.defaultDisplayOptions
         win <- GLFW.openWindow "glfw-idris-st createwindow example " disp
 
+        GLFW.showMouseCursor win True
         GLFW.setSwapInterval 1
-
-        -- wait for 5 seconds and then terminate
-        pt <- spawn $ pollThread win
-
-        listen 10
+        
+        pump win 5
 
         putStrLn "Shuting down GLFW..."
         GLFW.shutdown
 
   where
-    pollThread : GLFW.Window -> IO ()
-    pollThread win = do
-      GLFW.pollEvents
-      GLFW.swapBuffers win
-      --putStrLn "polling..."
-      pollThread win
+    pump : GLFW.Window -> Double -> IO ()
+    pump win sec = do
+        t <- GLFW.getTime
+        pumpAux t
+      where
+        pumpAux : Double -> IO ()
+        pumpAux t = do
+          t' <- GLFW.getTime
+          if t' - t >= sec
+            then pure ()
+            else do
+              ret <- GLFW.windowIsOpen win
+              if ret
+                then do
+                  GLFW.pollEvents
+                  GLFW.swapBuffers win
+                  GLFW.sleep 0.001
+                  pumpAux t
+                else pure ()

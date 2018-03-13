@@ -17,3 +17,8 @@ export
 intPtrToValue : Ptr -> IO Int
 intPtrToValue ptr
   = foreign FFI_C "intPtrToValue" (Ptr -> IO Int) ptr
+
+export
+sleepMillis : Int -> IO ()
+sleepMillis millis
+  = foreign FFI_C "sleepMillis" (Int -> IO ()) millis
