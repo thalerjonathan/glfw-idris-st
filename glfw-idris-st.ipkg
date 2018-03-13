@@ -1,0 +1,11 @@
+package glfw-idris-st
+
+sourcedir = src
+modules =   Graphics.UI.GLFW.GLFW
+          , Graphics.UI.GLFW.Internals.Utils.Utils
+
+pkgs = contrib
+
+makefile = MakefileGlfw
+
+objs = glfw_idris_st.o, glfw_idris_st.h

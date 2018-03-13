@@ -1,0 +1,12 @@
+CC = gcc
+CFLAGS = `idris --include` `pkg-config --cflags glfw3`
+
+glfw_idris_st.o: config glfw_idris_st.c glfw_idris_st.h 
+
+config: .PHONY
+	echo "%flag C \"`pkg-config --cflags glfw3`\"" > Graphics/UI/GLFW/GlfwConfig.idr
+	echo "%flag C \"`pkg-config --libs glfw3`\"" >> Graphics/UI/GLFW/GlfwConfig.idr
+clean: .PHONY
+	rm gl_idris.o
+
+.PHONY:
