@@ -1,0 +1,6 @@
+package exampleioapi
+
+opts = "-p glfw-idris-st" 
+
+executable = exampleioapi
+main = Main

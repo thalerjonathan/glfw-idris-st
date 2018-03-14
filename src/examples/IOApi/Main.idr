@@ -1,11 +1,12 @@
-module CreateWindow
+module Main
 
 import System.Concurrency.Channels
 
 import Graphics.UI.GLFW.GLFW as GLFW
+import Graphics.UI.GLFW.Utils.GlfwConfig
 
-createWindowTest : IO ()
-createWindowTest = do
+main : IO ()
+main = do
     ok <- GLFW.initialize 
     case ok of
       False => putStrLn "Initializing GLFW failed"

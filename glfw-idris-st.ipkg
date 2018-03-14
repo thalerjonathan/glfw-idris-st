@@ -3,6 +3,7 @@ package glfw-idris-st
 sourcedir = src
 modules =   Graphics.UI.GLFW.GLFW
           , Graphics.UI.GLFW.Internals.Utils.Utils
+          , Graphics.UI.GLFW.Utils.GlfwConfig
 
 pkgs = contrib
 
