@@ -3,6 +3,14 @@ module Main
 import Graphics.UI.GLFW as GLFW
 import Graphics.UI.GLFW.Utils.GlfwConfig
 
+-- TODO: why isn't it enough to import this one only?
+--import Graphics.Rendering.OpenGL as GL
+import Graphics.Rendering.OpenGL.Internal.Buffers
+import Graphics.Rendering.OpenGL.Internal.GLEW
+import Graphics.Rendering.OpenGL.Internal.GLBindings
+import Graphics.Rendering.OpenGL.Internal.OpenGLConfig
+import Graphics.Rendering.OpenGL.Internal.Types
+
 main : IO ()
 main = do
     ok <- GLFW.initialize 
@@ -19,6 +27,9 @@ main = do
           , displayOptions_height       = 600
           , displayOptions_displayMode  = GLFW.WindowMode } GLFW.defaultDisplayOptions
         win <- GLFW.createWindow "glfw-idris-st createwindow example " disp
+
+        glewInit
+
         GLFW.makeContextCurrent win
         putStrLn "done!"
 
@@ -150,6 +161,11 @@ main = do
               if ret
                 then do
                   GLFW.pollEvents
+
+                  glClear GL_COLOR_BUFFER_BIT
+                  glClear GL_DEPTH_BUFFER_BIT
+                  glClearColor 0 0 0 1
+
                   GLFW.swapBuffers win
                   GLFW.sleep 0.001
                   eventLoopAux t

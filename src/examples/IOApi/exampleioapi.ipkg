@@ -1,6 +1,6 @@
 package exampleioapi
 
-opts = "-p glfw-idris-st" 
+opts = "-p glfw-idris-st -p gl-idris-b"
 
 executable = exampleioapi
 main = Main
