@@ -1,7 +1,5 @@
 module Main
 
-import System.Concurrency.Channels
-
 import Graphics.UI.GLFW.GLFW as GLFW
 import Graphics.UI.GLFW.Utils.GlfwConfig
 
