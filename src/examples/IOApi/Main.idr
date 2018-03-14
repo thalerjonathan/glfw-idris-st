@@ -166,6 +166,15 @@ main = do
                   glClear GL_DEPTH_BUFFER_BIT
                   glClearColor 0 0 0 1
 
+                  glColor4f 1 1 1 1
+
+                  glBegin GL_LINE_LOOP 
+                  glVertex2f (-1) 0
+                  glVertex2f 0 (-1)
+                  glVertex2f 1 0
+                  glVertex2f 0 1
+                  glEnd
+
                   GLFW.swapBuffers win
                   GLFW.sleep 0.001
                   eventLoopAux t
