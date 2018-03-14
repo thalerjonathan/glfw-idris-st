@@ -1,7 +1,7 @@
-module Graphics.UI.GLFW.GLFW
+module Graphics.UI.GLFW
 
-import Graphics.UI.GLFW.Internals.Utils.Utils
-import Graphics.UI.GLFW.GlfwConfig
+import Graphics.UI.GLFW.Internals.Utils
+import Graphics.UI.GLFW.Utils.GlfwConfig
 
 %include C "GLFW/glfw3.h"
 
@@ -408,6 +408,11 @@ createWindow title disp = do
   -- TODO: set other parameters
 
   pure win
+
+export
+makeContextCurrent : Window -> IO ()
+makeContextCurrent win
+  = foreign FFI_C "glfwMakeContextCurrent" (Ptr -> IO ()) win
 
 export
 setWindowPosition : Window -> Int -> Int -> IO ()

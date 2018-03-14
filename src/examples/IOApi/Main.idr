@@ -1,6 +1,6 @@
 module Main
 
-import Graphics.UI.GLFW.GLFW as GLFW
+import Graphics.UI.GLFW as GLFW
 import Graphics.UI.GLFW.Utils.GlfwConfig
 
 main : IO ()
@@ -19,6 +19,7 @@ main = do
           , displayOptions_height       = 600
           , displayOptions_displayMode  = GLFW.WindowMode } GLFW.defaultDisplayOptions
         win <- GLFW.createWindow "glfw-idris-st createwindow example " disp
+        GLFW.makeContextCurrent win
         putStrLn "done!"
 
         GLFW.showMouseCursor win True

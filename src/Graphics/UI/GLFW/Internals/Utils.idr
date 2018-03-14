@@ -1,4 +1,4 @@
-module Graphics.UI.GLFW.Internals.Utils.Utils
+module Graphics.UI.GLFW.Internals.Utils
 
 %include C "glfw_idris_st.h"
 %link C "glfw_idris_st.o"
