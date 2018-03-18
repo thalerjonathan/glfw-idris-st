@@ -2,5 +2,7 @@ package exampleioapi
 
 opts = "-p glfw-idris-st -p gl-idris-b"
 
+makefile = MakefileConfig
+
 executable = exampleioapi
 main = Main
