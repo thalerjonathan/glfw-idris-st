@@ -4,7 +4,10 @@
 #include <idris_rts.h>
 
 int* nextIntArgPtr();
+double* nextDoubleArgPtr();
+
 int intPtrToValue(int*);
+double doublePtrToValue(double*);
 
 void sleepMillis(unsigned int);
 

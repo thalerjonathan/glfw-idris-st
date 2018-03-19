@@ -164,6 +164,25 @@ main = do
               if ret
                 then do
                   GLFW.pollEvents
+                  (x, y) <- GLFW.getCursorPos win
+                  mbp1 <- GLFW.isMouseButtonPressed win MouseButton1
+                  mbp2 <- GLFW.isMouseButtonPressed win MouseButton2
+                  mbp3 <- GLFW.isMouseButtonPressed win MouseButton3
+
+                  putStrLn $ "MousePos = (" ++ show x ++ "/" ++ show y ++ ")"
+                  putStrLn $ "MouseButton1 Pressed: " ++ show mbp1
+                  putStrLn $ "MouseButton2 Pressed: " ++ show mbp2
+                  putStrLn $ "MouseButton3 Pressed: " ++ show mbp3
+
+                  kup <- GLFW.isKeyPressed win KeyUp
+                  kdp <- GLFW.isKeyPressed win KeyDown
+                  klp <- GLFW.isKeyPressed win KeyLeft
+                  krp <- GLFW.isKeyPressed win KeyRight
+
+                  putStrLn $ "KeyUp Pressed: " ++ show kup
+                  putStrLn $ "KeyDown Pressed: " ++ show kdp
+                  putStrLn $ "KeyLeft Pressed: " ++ show klp
+                  putStrLn $ "KeyRight Pressed: " ++ show krp
 
                   glClear GL_COLOR_BUFFER_BIT
                   glClear GL_DEPTH_BUFFER_BIT

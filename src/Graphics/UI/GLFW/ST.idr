@@ -63,6 +63,10 @@ interface Glfw (m : Type -> Type) where
   setMouseWheelCallback    : (ctx : Var) -> Ptr -> ST m () [ctx ::: GlfwContext HasWindow]
   setMousePositionCallback : (ctx : Var) -> Ptr -> ST m () [ctx ::: GlfwContext HasWindow]
 
+  getMousePosition     : (ctx : Var) -> ST m (Double, Double) [ctx ::: GlfwContext HasWindow]
+  isMouseButtonPressed : GLFWMouseButton -> (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
+  isKeyPressed         : GLFWKey -> (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
+
   destroyWindow       : (ctx : Var) 
                       -> ST m () [ctx ::: GlfwContext HasWindow :-> GlfwContext Initialized]
 
@@ -159,6 +163,18 @@ Glfw IO where
   setMousePositionCallback ctx ptr = do
       win <- read ctx
       lift $ GLFW.setMousePositionCallback win ptr
+
+  getMousePosition ctx = do
+    win <- read ctx
+    lift $ GLFW.getCursorPos win
+
+  isMouseButtonPressed btn ctx = do
+    win <- read ctx
+    lift $ GLFW.isMouseButtonPressed win btn
+
+  isKeyPressed key ctx = do
+    win <- read ctx
+    lift $ GLFW.isKeyPressed win key
 
   destroyWindow ctx = do
     win <- read ctx

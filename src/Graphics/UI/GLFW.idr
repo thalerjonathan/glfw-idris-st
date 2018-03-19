@@ -157,6 +157,75 @@ data GLFWMouseButton
   | MouseButton5 | MouseButton6 | MouseButton7 | MouseButton8
 
 export
+glfwKeyToInt : GLFWKey -> Int
+glfwKeyToInt (CharKey x) = cast x
+glfwKeyToInt KeyUnknown = -1
+glfwKeyToInt KeySpace = 32
+glfwKeyToInt KeySpecial = -1
+glfwKeyToInt KeyEsc = 256
+glfwKeyToInt KeyF1 = 290
+glfwKeyToInt KeyF2 = 291
+glfwKeyToInt KeyF3 = 292
+glfwKeyToInt KeyF4 = 293
+glfwKeyToInt KeyF5 = 294
+glfwKeyToInt KeyF6 = 295
+glfwKeyToInt KeyF7 = 296
+glfwKeyToInt KeyF8 = 297
+glfwKeyToInt KeyF9 = 298
+glfwKeyToInt KeyF10 = 299
+glfwKeyToInt KeyF11 = 300
+glfwKeyToInt KeyF12 = 301
+glfwKeyToInt KeyF13 = 302
+glfwKeyToInt KeyF14 = 303
+glfwKeyToInt KeyF15 = 304
+glfwKeyToInt KeyF16 = 305
+glfwKeyToInt KeyF17 = 306
+glfwKeyToInt KeyF18 = 307
+glfwKeyToInt KeyF19 = 308
+glfwKeyToInt KeyF20 = 309
+glfwKeyToInt KeyF21 = 310
+glfwKeyToInt KeyF22 = 311
+glfwKeyToInt KeyF23 = 312
+glfwKeyToInt KeyF24 = 313
+glfwKeyToInt KeyF25 = 314
+glfwKeyToInt KeyUp = 265
+glfwKeyToInt KeyDown = 264
+glfwKeyToInt KeyLeft = 263
+glfwKeyToInt KeyRight = 262
+glfwKeyToInt KeyLeftShift = 340
+glfwKeyToInt KeyRightShift = 344
+glfwKeyToInt KeyLeftCtrl = 341
+glfwKeyToInt KeyRightCtrl = 345
+glfwKeyToInt KeyLeftAlt = 342
+glfwKeyToInt KeyRightAlt = 346
+glfwKeyToInt KeyTab = 258
+glfwKeyToInt KeyEnter = 257
+glfwKeyToInt KeyBackspace = 259
+glfwKeyToInt KeyInsert = 260
+glfwKeyToInt KeyDel = 261
+glfwKeyToInt KeyPageup = 266
+glfwKeyToInt KeyPagedown = 267
+glfwKeyToInt KeyHome = 268
+glfwKeyToInt KeyEnd = 269
+glfwKeyToInt KeyPad0 = 320
+glfwKeyToInt KeyPad1 = 321
+glfwKeyToInt KeyPad2 = 322
+glfwKeyToInt KeyPad3 = 323
+glfwKeyToInt KeyPad4 = 324
+glfwKeyToInt KeyPad5 = 325
+glfwKeyToInt KeyPad6 = 326
+glfwKeyToInt KeyPad7 = 327
+glfwKeyToInt KeyPad8 = 328
+glfwKeyToInt KeyPad9 = 329
+glfwKeyToInt KeyPadDivide = 331
+glfwKeyToInt KeyPadMultiply = 332
+glfwKeyToInt KeyPadSubtract = 333
+glfwKeyToInt KeyPadAdd = 334
+glfwKeyToInt KeyPadDecimal = 330
+glfwKeyToInt KeyPadEqual = 336
+glfwKeyToInt KeyPadEnter = 335
+
+export
 glfwKeyFromInt : Int -> Maybe GLFWKey
 --glfwKeyFromInt (-1) = Just KeyUnknown
 glfwKeyFromInt 32 = Just KeySpace
@@ -691,6 +760,51 @@ setMousePositionCallback : Window -> Ptr -> IO ()
 setMousePositionCallback win clbkPtr = do
   _ <- foreign FFI_C "glfwSetCursorPosCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
   pure ()
+
+private
+glfwPress : Int
+glfwPress = 1
+
+private 
+getMouseButton : Window -> Int -> IO Int
+getMouseButton win but
+  = foreign FFI_C "glfwGetMouseButton" (Ptr -> Int -> IO Int) win but
+
+export
+isMouseButtonPressed : Window -> GLFWMouseButton -> IO Bool
+isMouseButtonPressed win MouseButton1 = getMouseButton win 0 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton2 = getMouseButton win 1 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton3 = getMouseButton win 2 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton4 = getMouseButton win 3 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton5 = getMouseButton win 4 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton6 = getMouseButton win 5 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton7 = getMouseButton win 6 >>= \ret => pure (ret == glfwPress)
+isMouseButtonPressed win MouseButton8 = getMouseButton win 7 >>= \ret => pure (ret == glfwPress)
+
+private 
+getKey : Window -> Int -> IO Int
+getKey win k
+  = foreign FFI_C "glfwGetKey" (Ptr -> Int -> IO Int) win k
+
+export
+isKeyPressed : Window -> GLFWKey -> IO Bool
+isKeyPressed win k = do
+  let kInt = glfwKeyToInt k
+  ret <- getKey win kInt
+  pure (ret == glfwPress)
+
+export
+getCursorPos : Window -> IO (Double, Double)
+getCursorPos win = do
+  xPtr <- nextDoubleArgPtr
+  yPtr <- nextDoubleArgPtr
+
+  foreign FFI_C "glfwGetCursorPos" (Ptr -> Ptr -> Ptr -> IO ()) win xPtr yPtr
+
+  x <- doublePtrToValue xPtr
+  y <- doublePtrToValue yPtr
+
+  pure (x, y)
 
 export
 windowIsOpen : Window -> IO Bool
