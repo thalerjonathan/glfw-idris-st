@@ -22,6 +22,7 @@ interface Glfw (m : Type -> Type) where
   getTime         : (ctx : Var) -> ST m Double [ctx ::: GlfwContext Initialized]
   pollEvents      : (ctx : Var) -> ST m () [ctx ::: GlfwContext Initialized]
   sleep           : Double -> (ctx : Var) -> ST m () [ctx ::: GlfwContext Initialized]
+  primaryMonitor  : (ctx : Var) -> ST m Monitor [ctx ::: GlfwContext Initialized]
 
   ||| Allows to run an action which depends on an Initialized GlfwContext in
   |||  context with HasWindow as well because all those functions do not need
@@ -90,6 +91,9 @@ Glfw IO where
 
   sleep secFract ctx = do
     lift $ GLFW.sleep secFract
+
+  primaryMonitor ctx = do
+    lift $ GLFW.getPrimaryMonitor
 
   liftToHasWindow f ctx = do
     ret <- f ctx
