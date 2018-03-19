@@ -1,0 +1,8 @@
+package stapi
+
+opts = "-p glfw-idris-st -p gl-idris-b -p contrib"
+
+makefile = MakefileConfig
+
+executable = glfwstapi
+main = Main

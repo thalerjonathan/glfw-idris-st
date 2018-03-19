@@ -2,10 +2,11 @@ package glfw-idris-st
 
 sourcedir = src
 modules =   Graphics.UI.GLFW
+          , Graphics.UI.GLFW.ST
           , Graphics.UI.GLFW.Internals.Utils
           , Graphics.UI.GLFW.Utils.GlfwConfig
 
-pkgs = contrib
+opts = "-p contrib"
 
 makefile = MakefileGlfw
 

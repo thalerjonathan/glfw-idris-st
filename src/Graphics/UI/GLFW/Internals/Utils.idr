@@ -4,14 +4,9 @@ module Graphics.UI.GLFW.Internals.Utils
 %link C "glfw_idris_st.o"
 
 export
-allocIntArgPtr : IO Ptr
-allocIntArgPtr
-  = foreign FFI_C "allocIntArgPtr" (IO Ptr)
-
-export
-freeIntArgPtr : Ptr -> IO ()
-freeIntArgPtr ptr
-  = foreign FFI_C "freeIntArgPtr" (Ptr -> IO ()) ptr
+nextIntArgPtr : IO Ptr
+nextIntArgPtr
+  = foreign FFI_C "nextIntArgPtr" (IO Ptr)
 
 export
 intPtrToValue : Ptr -> IO Int

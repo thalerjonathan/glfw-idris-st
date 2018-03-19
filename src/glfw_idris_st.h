@@ -3,8 +3,7 @@
 
 #include <idris_rts.h>
 
-int* allocIntArgPtr();
-void freeIntArgPtr(int*);
+int* nextIntArgPtr();
 int intPtrToValue(int*);
 
 void sleepMillis(unsigned int);

@@ -346,19 +346,15 @@ shutdown
 export
 getGlfwVersion : IO (Int, Int, Int)
 getGlfwVersion = do
-  majPtr <- allocIntArgPtr
-  minPtr <- allocIntArgPtr
-  revPtr <- allocIntArgPtr
+  majPtr <- nextIntArgPtr
+  minPtr <- nextIntArgPtr
+  revPtr <- nextIntArgPtr
 
   foreign FFI_C "glfwGetVersion" (Ptr -> Ptr -> Ptr -> IO ()) majPtr minPtr revPtr
 
   maj <- intPtrToValue majPtr
   min <- intPtrToValue majPtr
   rev <- intPtrToValue majPtr
-
-  freeIntArgPtr majPtr
-  freeIntArgPtr minPtr
-  freeIntArgPtr revPtr
 
   pure (maj, min, rev)
 
@@ -441,17 +437,14 @@ showMouseCursor win False = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int 
 export
 getWindowDimensions : Window -> IO (Int, Int)
 getWindowDimensions win = do
-  widthPtr <- allocIntArgPtr
-  heightPtr <- allocIntArgPtr
+  widthPtr <- nextIntArgPtr
+  heightPtr <- nextIntArgPtr
 
   foreign FFI_C "glfwGetWindowSize" (Ptr -> Ptr -> Ptr -> IO ()) win widthPtr heightPtr
 
   width <- intPtrToValue widthPtr
   height <- intPtrToValue heightPtr
 
-  freeIntArgPtr widthPtr
-  freeIntArgPtr heightPtr
-  
   pure (width, height)
 
 export
