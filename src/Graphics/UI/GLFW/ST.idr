@@ -53,6 +53,8 @@ interface Glfw (m : Type -> Type) where
   isWindowOpen        : (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
   swapBuffers         : (ctx : Var) -> ST m () [ctx ::: GlfwContext HasWindow]
   
+  windowValue         : WindowValue -> (ctx : Var) -> ST m Int [ctx ::: GlfwContext HasWindow]
+
   setWindowCloseCallback   : (ctx : Var) -> Ptr -> ST m () [ctx ::: GlfwContext HasWindow]
   setWindowSizeCallback    : (ctx : Var) -> Ptr -> ST m () [ctx ::: GlfwContext HasWindow]
   setKeyCallback           : (ctx : Var) -> Ptr -> ST m () [ctx ::: GlfwContext HasWindow]
@@ -125,6 +127,10 @@ Glfw IO where
   swapBuffers ctx = do
     win <- read ctx
     lift $ GLFW.swapBuffers win
+
+  windowValue val ctx = do
+    win <- read ctx
+    lift $ GLFW.getWindowValue win val
 
   setWindowCloseCallback ctx ptr = do
     win <- read ctx

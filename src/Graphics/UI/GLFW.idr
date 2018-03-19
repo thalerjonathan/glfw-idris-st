@@ -372,47 +372,160 @@ getPrimaryMonitor : IO Monitor
 getPrimaryMonitor
   = foreign FFI_C "glfwGetPrimaryMonitor" (IO Monitor)
 
+--------------------------------------------------------------------
+-- only used from within createWindow, is extremely lowlevel
+private
+glfwTrue : Int
+glfwTrue = 1
+
+glfwFalse : Int
+glfwFalse = 0
+
+private
+glfwResizable : Int
+glfwResizable = 0x00020003 -- GLFW_RESIZABLE
+
+private
+glfwStereo : Int
+glfwStereo = 0x0002100C   -- GLFW_STEREO
+
+private
+glfwAuxBuffers : Int
+glfwAuxBuffers = 0x0002100B -- GLFW_AUX_BUFFERS 
+
+private
+glfwAccumRedBits : Int
+glfwAccumRedBits = 0x00021007 -- GLFW_ACCUM_RED_BITS 
+
+private
+glfwAccumGreenBits : Int
+glfwAccumGreenBits = 0x00021008 -- GLFW_ACCUM_GREEN_BITS  
+
+private
+glfwAccumBlueBits : Int
+glfwAccumBlueBits = 0x00021009 -- GLFW_ACCUM_BLUE_BITS    
+
+private
+glfwAccumAlphaBits : Int
+glfwAccumAlphaBits = 0x0002100A -- GLFW_ACCUM_ALPHA_BITS    
+
+private
+glfwSamples : Int
+glfwSamples = 0x0002100D -- GLFW_SAMPLES
+
+private
+glfwRefreshRate : Int
+glfwRefreshRate = 0x0002100F -- GLFW_REFRESH_RATE   
+
+private
+glfwRedBits : Int
+glfwRedBits = 0x00021001 -- GLFW_RED_BITS
+
+private
+glfwGreenBits : Int
+glfwGreenBits = 0x00021002 -- GLFW_GREEN_BITS 
+
+private
+glfwBlueBits : Int
+glfwBlueBits = 0x00021003 -- GLFW_BLUE_BITS 
+
+private
+glfwAlphaBits : Int
+glfwAlphaBits = 0x00021004 -- GLFW_ALPHA_BITS 
+
+private
+glfwDepthBits : Int
+glfwDepthBits = 0x00021005 -- GLFW_DEPTH_BITS 
+
+private
+glfwStencilBits : Int
+glfwStencilBits = 0x00021006 -- GLFW_STENCIL_BITS 
+
+private
+glfwContextMajor : Int
+glfwContextMajor = 0x00022002 -- GLFW_CONTEXT_VERSION_MAJOR   
+
+private
+glfwContextMinor : Int
+glfwContextMinor = 0x00022003 -- GLFW_CONTEXT_VERSION_MINOR   
+
+private
+glfwGLForward : Int
+glfwGLForward = 0x00022006 --	GLFW_OPENGL_FORWARD_COMPAT   
+
+private
+glfwGLDebug : Int
+glfwGLDebug = 0x00022007 --	GLFW_OPENGL_DEBUG_CONTEXT   
+
+private
+glfwGlProfile : Int
+glfwGlProfile = 0x00022008 -- GLFW_OPENGL_PROFILE   
+
+private
+glfwGLAnyProfile : Int
+glfwGLAnyProfile = 0 -- GLFW_OPENGL_ANY_PROFILE
+
+private
+glfwGLCoreProfile : Int
+glfwGLCoreProfile = 0x00032001 -- GLFW_OPENGL_CORE_PROFILE
+
+private
+glfwCompatProfile : Int
+glfwCompatProfile = 0x00032002 --	GLFW_OPENGL_COMPAT_PROFILE   0x00032002
+--------------------------------------------------------------------
+
+private
+windowHint : Int -> Int -> IO ()
+windowHint hint value
+  = foreign FFI_C "glfwWindowHint" (Int -> Int -> IO ()) hint value
+
 export
 createWindow : String -> DisplayOptions -> IO Window
 createWindow title disp = do
-{-
-  displayOptions_width                   : Int
-  displayOptions_height                  : Int
-  displayOptions_numRedBits              : Int
-  displayOptions_numGreenBits            : Int
-  displayOptions_numBlueBits             : Int
-  displayOptions_numAlphaBits            : Int
-  displayOptions_numDepthBits            : Int
-  displayOptions_numStencilBits          : Int
-  displayOptions_displayMode             : DisplayMode
-  displayOptions_refreshRate             : Maybe Int
-  displayOptions_accumNumRedBits         : Maybe Int
-  displayOptions_accumNumGreenBits       : Maybe Int
-  displayOptions_accumNumBlueBits        : Maybe Int
-  displayOptions_accumNumAlphaBits       : Maybe Int
-  displayOptions_numAuxiliaryBuffers     : Maybe Int
-  displayOptions_numFsaaSamples          : Maybe Int
-  displayOptions_windowIsResizable       : Bool
-  displayOptions_stereoRendering         : Bool
-  displayOptions_openGLVersion           : (Int, Int)
-  displayOptions_openGLForwardCompatible : Bool
-  displayOptions_openGLDebugContext      : Bool
-  displayOptions_openGLProfile           : OpenGLProfile
--}
-
   let width  = displayOptions_width disp
   let height = displayOptions_height disp
+
+  let redBits = displayOptions_numRedBits disp
+  let greenBits = displayOptions_numGreenBits disp
+  let blueBits = displayOptions_numBlueBits disp
+  let alphaBits = displayOptions_numAlphaBits disp
+  let depthBits = displayOptions_numDepthBits disp
+  let stencilBits = displayOptions_numStencilBits disp
+
+  let (glVerMin, glVerMaj) = displayOptions_openGLVersion disp
+
+  when (displayOptions_windowIsResizable disp) (windowHint glfwResizable glfwTrue)
+  when (displayOptions_stereoRendering disp) (windowHint glfwStereo glfwTrue)
+  maybe (pure ()) (\n => (windowHint glfwAuxBuffers n)) (displayOptions_numAuxiliaryBuffers disp)
+  maybe (pure ()) (\n => (windowHint glfwAccumRedBits n)) (displayOptions_accumNumRedBits disp)
+  maybe (pure ()) (\n => (windowHint glfwAccumGreenBits n)) (displayOptions_accumNumGreenBits disp)
+  maybe (pure ()) (\n => (windowHint glfwAccumBlueBits n)) (displayOptions_accumNumBlueBits disp)
+  maybe (pure ()) (\n => (windowHint glfwAccumAlphaBits n)) (displayOptions_accumNumAlphaBits disp)
+  maybe (pure ()) (\n => (windowHint glfwSamples n)) (displayOptions_numFsaaSamples disp)
+  maybe (pure ()) (\n => (windowHint glfwRefreshRate n)) (displayOptions_refreshRate disp)
+  when (redBits > 0) (windowHint glfwRedBits redBits)
+  when (greenBits > 0) (windowHint glfwGreenBits greenBits)
+  when (blueBits > 0) (windowHint glfwBlueBits blueBits)
+  when (alphaBits > 0) (windowHint glfwAlphaBits alphaBits)
+  when (depthBits > 0) (windowHint glfwDepthBits depthBits)
+  when (stencilBits > 0) (windowHint glfwStencilBits stencilBits)
+  
+  windowHint glfwContextMajor glVerMaj
+  windowHint glfwContextMinor glVerMin
+  when (displayOptions_openGLForwardCompatible disp) (windowHint glfwGLForward glfwTrue)
+  when (displayOptions_openGLDebugContext disp) (windowHint glfwGLDebug glfwTrue)
+
+  case displayOptions_openGLProfile disp of
+    DefaultProfile        => windowHint glfwGlProfile glfwGLAnyProfile
+    CoreProfile           => windowHint glfwGlProfile glfwGLCoreProfile
+    CompatibilityProfile  => windowHint glfwGlProfile glfwCompatProfile
 
   monitor <-
     case displayOptions_displayMode disp of
       WindowMode     => pure null
       FullscreenMode => getPrimaryMonitor
 
-  win <- foreign FFI_C "glfwCreateWindow" (Int -> Int -> String -> Ptr -> Ptr -> IO Ptr) width height title monitor null
-
-  -- TODO: set other parameters
-
-  pure win
+  foreign FFI_C "glfwCreateWindow" (Int -> Int -> String -> Ptr -> Ptr -> IO Ptr) width height title monitor null
 
 export
 makeContextCurrent : Window -> IO ()
@@ -434,14 +547,26 @@ setSwapInterval : Int -> IO ()
 setSwapInterval interval
   = foreign FFI_C "glfwSwapInterval" (Int -> IO ()) interval
 
--- #define GLFW_CURSOR_NORMAL   0x00034001
--- #define GLFW_CURSOR_HIDDEN   0x00034002
--- #define GLFW_CURSOR_DISABLED 0x00034003
--- #define GLFW_CURSOR          0x00033001
+private
+glfwCursor : Int
+glfwCursor = 0x00033001 -- GLFW_CURSOR
+
+private
+glfwCursorNormal : Int
+glfwCursorNormal = 0x00034001 -- GLFW_CURSOR_NORMAL
+
+private
+glfwCursorHidden : Int
+glfwCursorHidden = 0x00034002 -- GLFW_CURSOR_HIDDEN
+
+private
+glfwCursorDisabled : Int
+glfwCursorDisabled = 0x00034003 -- GLFW_CURSOR_DISABLED
+
 export
 showMouseCursor : Window -> Bool -> IO ()
-showMouseCursor win True  = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int -> IO ()) win 0x00033001 0x00034001 
-showMouseCursor win False = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int -> IO ()) win 0x00033001 0x00034002 
+showMouseCursor win True  = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int -> IO ()) win glfwCursor glfwCursorHidden 
+showMouseCursor win False = foreign FFI_C "glfwSetInputMode" (Ptr -> Int -> Int -> IO ()) win glfwCursor 0x00034002 
 
 export
 getWindowDimensions : Window -> IO (Int, Int)
@@ -456,9 +581,25 @@ getWindowDimensions win = do
 
   pure (width, height)
 
+private
+glfwGetWindowAttrib : Window -> Int -> IO Int
+glfwGetWindowAttrib win attrib
+  = foreign FFI_C "glfwGetWindowAttrib" (Ptr -> Int -> IO Int) win attrib
+
 export
-getWindowValue : WindowValue -> IO Int
-getWindowValue wv = pure 42 -- TODO: implement ?getWindowValue
+getWindowValue : Window -> WindowValue -> IO Int
+getWindowValue win NumRedBits = glfwGetWindowAttrib win glfwRedBits
+getWindowValue win NumGreenBits = glfwGetWindowAttrib win glfwGreenBits
+getWindowValue win NumBlueBits = glfwGetWindowAttrib win glfwBlueBits
+getWindowValue win NumAlphaBits = glfwGetWindowAttrib win glfwAlphaBits
+getWindowValue win NumDepthBits = glfwGetWindowAttrib win glfwDepthBits
+getWindowValue win NumStencilBits = glfwGetWindowAttrib win glfwStencilBits
+getWindowValue win NumAccumRedBits = glfwGetWindowAttrib win glfwAccumRedBits
+getWindowValue win NumAccumGreenBits = glfwGetWindowAttrib win glfwAccumGreenBits
+getWindowValue win NumAccumBlueBits = glfwGetWindowAttrib win glfwAccumBlueBits
+getWindowValue win NumAccumAlphaBits = glfwGetWindowAttrib win glfwAccumAlphaBits
+getWindowValue win NumAuxBuffers = glfwGetWindowAttrib win glfwAuxBuffers
+getWindowValue win NumFsaaSamples = glfwGetWindowAttrib win glfwSamples
 
 public export
 WindowCloseCallback : Type
