@@ -1,2 +1,2 @@
 %flag C ""
-%flag C "-lglfw "
+%flag C ""

@@ -3,15 +3,14 @@ module Main
 import Data.IORef
 
 import Graphics.UI.GLFW as GLFW
-import Graphics.UI.GLFW.Utils.GlfwConfig
-
 -- TODO: why isn't it enough to import this one only?
---import Graphics.Rendering.OpenGL as GL
 import Graphics.Rendering.OpenGL.Internal.Buffers
 import Graphics.Rendering.OpenGL.Internal.GLEW
 import Graphics.Rendering.OpenGL.Internal.GLBindings
 import Graphics.Rendering.OpenGL.Internal.OpenGLConfig
 import Graphics.Rendering.OpenGL.Internal.Types
+
+import Config
 
 initRef : Int 
 initRef = 0
