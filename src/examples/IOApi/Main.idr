@@ -1,5 +1,7 @@
 module Main
 
+import Data.IORef
+
 import Graphics.UI.GLFW as GLFW
 import Graphics.UI.GLFW.Utils.GlfwConfig
 
@@ -11,12 +13,17 @@ import Graphics.Rendering.OpenGL.Internal.GLBindings
 import Graphics.Rendering.OpenGL.Internal.OpenGLConfig
 import Graphics.Rendering.OpenGL.Internal.Types
 
+initRef : Int 
+initRef = 0
+
 main : IO ()
 main = do
     ok <- GLFW.initialize 
     case ok of
       False => putStrLn "Initializing GLFW failed"
       True  => do
+        ref <- newIORef 0
+
         (maj, min, rev) <- GLFW.getGlfwVersion
         putStrLn "Initializing GLFW successful"
         putStrLn $ "--- GLFW " ++ show maj ++ "." ++ show min ++ "." ++ show rev ++ " ---"
@@ -42,7 +49,7 @@ main = do
         GLFW.setCharCallback          win !charCallbackPtr
         GLFW.setMouseButtonCallback   win !mouseButtonCallbackPtr
         GLFW.setMouseWheelCallback    win !mouseWheelCallbackPtr
-        GLFW.setMousePositionCallback win !mousePositionCallbackPtr
+        GLFW.setMousePositionCallback win !(mousePositionCallbackPtr ref)
 
         eventLoop win 5
 
@@ -134,17 +141,19 @@ main = do
       pure ()
 
     mouseWheelCallbackPtr : IO Ptr
-    mouseWheelCallbackPtr = foreign FFI_C "%wrapper" (CFnPtr MouseButtonCallback -> IO Ptr) (MkCFnPtr mouseButtonCallback)
+    mouseWheelCallbackPtr = foreign FFI_C "%wrapper" (CFnPtr MouseWheelCallback -> IO Ptr) (MkCFnPtr mouseWheelCallback)
 
-    mousePositionCallback : MousePositionCallback
-    mousePositionCallback win' xpos ypos = unsafePerformIO $ do 
-      putStrLn "mousePositionCallback"
+    mousePositionCallback : IORef Integer -> MousePositionCallback
+    mousePositionCallback ref win' xpos ypos = unsafePerformIO $ do 
+      putStrLn "mousePositionCallback begin"
       putStrLn $ "xpos = " ++ show xpos ++
                  " ypos = " ++ show ypos
+      -- modifyIORef ref (+1) -- when uncommenting this, the program will core dump with a segmentation fault
+      putStrLn "mousePositionCallback end"
       pure ()
 
-    mousePositionCallbackPtr : IO Ptr
-    mousePositionCallbackPtr = foreign FFI_C "%wrapper" (CFnPtr MousePositionCallback -> IO Ptr) (MkCFnPtr mousePositionCallback)
+    mousePositionCallbackPtr : IORef Integer -> IO Ptr
+    mousePositionCallbackPtr ref = foreign FFI_C "%wrapper" (CFnPtr MousePositionCallback -> IO Ptr) (MkCFnPtr (mousePositionCallback ref))
 
     eventLoop : GLFW.Window -> Double -> IO ()
     eventLoop win sec = do
