@@ -3,12 +3,7 @@ module Main
 import Data.IORef
 
 import Graphics.UI.GLFW as GLFW
--- TODO: why isn't it enough to import this one only?
-import Graphics.Rendering.OpenGL.Internal.Buffers
-import Graphics.Rendering.OpenGL.Internal.GLEW
-import Graphics.Rendering.OpenGL.Internal.GLBindings
-import Graphics.Rendering.OpenGL.Internal.OpenGLConfig
-import Graphics.Rendering.OpenGL.Internal.Types
+import Graphics.Rendering.OpenGL
 
 import Config
 
