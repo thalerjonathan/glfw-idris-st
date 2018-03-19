@@ -10,6 +10,10 @@ Window : Type
 Window = Ptr
 
 export
+Monitor : Type
+Monitor = Ptr
+
+export
 NullWindow : Window
 NullWindow = null
 
@@ -364,6 +368,11 @@ destroyWindow win
   = foreign FFI_C "glfwDestroyWindow" (Window -> IO ()) win
 
 export
+getPrimaryMonitor : IO Monitor
+getPrimaryMonitor
+  = foreign FFI_C "glfwGetPrimaryMonitor" (IO Monitor)
+
+export
 createWindow : String -> DisplayOptions -> IO Window
 createWindow title disp = do
 {-
@@ -394,10 +403,10 @@ createWindow title disp = do
   let width  = displayOptions_width disp
   let height = displayOptions_height disp
 
-  let monitor = 
+  monitor <-
     case displayOptions_displayMode disp of
-      WindowMode     => null
-      FullscreenMode => null -- TODO: set to valid monitor config
+      WindowMode     => pure null
+      FullscreenMode => getPrimaryMonitor
 
   win <- foreign FFI_C "glfwCreateWindow" (Int -> Int -> String -> Ptr -> Ptr -> IO Ptr) width height title monitor null
 
