@@ -1,8 +1,8 @@
-package exampleioapi
+package glfwioapi
 
 opts = "-p glfw-idris-st -p gl-idris-b"
 
 makefile = MakefileConfig
 
-executable = exampleioapi
+executable = glfwioapi
 main = Main

@@ -1,5 +1,5 @@
 install:
-	idris --install exampleioapi.ipkg
+	idris --install glfwioapi.ipkg
 
 clean:
-	idris --clean exampleioapi.ipkg
+	idris --clean glfwioapi.ipkg
