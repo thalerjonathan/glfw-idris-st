@@ -11,8 +11,8 @@ which is using Algebraic Effects, this one is using the ST approach as introduce
 Assuming you have installed Idris and it is on your path.
 
 1. Make sure glfw3 is installed on your system and can be found by pkg-config. On Linux use the package manager of your system, on Mac OS X use brew install.
-2. Download / clone gl-idris-b.
-3. Install the library by navigating to the gl-idris-b folder and simply invoke 'make' in a terminal.
+2. Download / clone glfw-idris-st.
+3. Install the library by navigating to the glfw-idris-st folder and simply invoke 'make' in a terminal.
 
 ### Examples
 There exists two examples which both show how to initialize GLFW, create a window, initialize GLEW, render a rectangle and shutdown after 5 seconds.
