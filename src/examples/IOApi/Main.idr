@@ -22,6 +22,11 @@ main = do
         putStrLn "Initializing GLFW successful"
         putStrLn $ "--- GLFW " ++ show maj ++ "." ++ show min ++ "." ++ show rev ++ " ---"
 
+        mon <- GLFW.getPrimaryMonitor
+        vmode <- GLFW.getVideoMode mon
+
+        putStrLn $ "VideoMode of primary monitor: " ++ show vmode
+
         putStr "Creating Window... "
         let disp = record 
           { displayOptions_width        = 800

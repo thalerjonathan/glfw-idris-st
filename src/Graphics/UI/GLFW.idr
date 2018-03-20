@@ -1,5 +1,8 @@
 module Graphics.UI.GLFW
 
+import CFFI.Memory
+import CFFI.Types
+
 import Graphics.UI.GLFW.Internals.Utils
 import Graphics.UI.GLFW.Utils.GlfwConfig
 
@@ -155,6 +158,22 @@ public export
 data GLFWMouseButton
   = MouseButton1 | MouseButton2 | MouseButton3 | MouseButton4
   | MouseButton5 | MouseButton6 | MouseButton7 | MouseButton8
+
+public export
+record GlfwVideomode where
+  constructor MkGlfwVideomode 
+  width       : Int
+  height      : Int
+  redBits     : Int
+  greenBits   : Int
+  blueBits    : Int
+  refreshRate : Int
+
+export
+Show GlfwVideomode where
+  show (MkGlfwVideomode w h rb gb bb rr) = "VideoMode " ++ show w ++ "x" ++ show h ++ 
+                                           ", " ++ show rb ++ "-" ++ show gb ++ "-" ++ show bb ++
+                                           ", " ++ show rr ++ "Hz" 
 
 export
 glfwKeyToInt : GLFWKey -> Int
@@ -700,6 +719,32 @@ setWindowCloseCallback : Window -> Ptr -> IO ()
 setWindowCloseCallback win clbkPtr = do
   _ <- foreign FFI_C "glfwSetWindowCloseCallback" (Ptr -> Ptr -> IO Ptr) win clbkPtr
   pure ()
+
+export
+getVideoMode : Monitor -> IO GlfwVideomode
+getVideoMode mon = do
+    ret <- foreign FFI_C "glfwGetVideoMode" (Ptr -> IO Ptr) mon
+    let vmodeCptr = toCPtr ret
+
+    wInt32 <- peek I32 $ field videoModeStruct 0 vmodeCptr
+    hInt32 <- peek I32 $ field videoModeStruct 1 vmodeCptr
+    rbInt32 <- peek I32 $ field videoModeStruct 2 vmodeCptr
+    gbInt32 <- peek I32 $ field videoModeStruct 3 vmodeCptr
+    bbInt32 <- peek I32 $ field videoModeStruct 4 vmodeCptr
+    rrInt32 <- peek I32 $ field videoModeStruct 5 vmodeCptr
+    
+    let w = prim__zextB32_Int wInt32
+    let h = prim__zextB32_Int hInt32
+    let rb = prim__zextB32_Int rbInt32
+    let gb = prim__zextB32_Int gbInt32
+    let bb = prim__zextB32_Int bbInt32
+    let rr = prim__zextB32_Int rrInt32
+    
+    pure $ MkGlfwVideomode w h rb gb bb rr 
+
+  where
+    videoModeStruct : Composite
+    videoModeStruct = STRUCT [I32, I32, I32, I32, I32, I32]
 
 public export
 WindowSizeCallback : Type 
