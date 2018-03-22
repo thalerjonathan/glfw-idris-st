@@ -73,7 +73,7 @@ data WindowValue
   | NumFsaaSamples
 
 public export
-data GLFWKey
+data GlfwKey
   = CharKey Char
   | KeyUnknown
   | KeySpace
@@ -142,20 +142,20 @@ data GLFWKey
   | KeyPadEnter
 
 public export
-data GLFWKeyAction
+data GlfwKeyAction
   = Press
   | Release
   | Repeat
 
 public export
-data GLFWKeyModifier
+data GlfwKeyModifier
   = Shift
   | Control
   | Alt
   | Super
 
 public export
-data GLFWMouseButton
+data GlfwMouseButton
   = MouseButton1 | MouseButton2 | MouseButton3 | MouseButton4
   | MouseButton5 | MouseButton6 | MouseButton7 | MouseButton8
 
@@ -176,7 +176,7 @@ Show GlfwVideomode where
                                            ", " ++ show rr ++ "Hz" 
 
 export
-glfwKeyToInt : GLFWKey -> Int
+glfwKeyToInt : GlfwKey -> Int
 glfwKeyToInt (CharKey x) = cast x
 glfwKeyToInt KeyUnknown = -1
 glfwKeyToInt KeySpace = 32
@@ -245,7 +245,7 @@ glfwKeyToInt KeyPadEqual = 336
 glfwKeyToInt KeyPadEnter = 335
 
 export
-glfwKeyFromInt : Int -> Maybe GLFWKey
+glfwKeyFromInt : Int -> Maybe GlfwKey
 --glfwKeyFromInt (-1) = Just KeyUnknown
 glfwKeyFromInt 32 = Just KeySpace
 -- #define 	GLFW_KEY_APOSTROPHE   39 /* ' */
@@ -371,14 +371,14 @@ glfwKeyFromInt 346 = Just KeyRightAlt
 glfwKeyFromInt _ = Nothing
 
 export
-glfwKeyActionFromInt : Int -> Maybe GLFWKeyAction
+glfwKeyActionFromInt : Int -> Maybe GlfwKeyAction
 glfwKeyActionFromInt 0 = Just Release
 glfwKeyActionFromInt 1 = Just Press
 glfwKeyActionFromInt 2 = Just Repeat
 glfwKeyActionFromInt _ = Nothing
 
 export
-glfwKeyModifierFromInt : Int -> Maybe GLFWKeyModifier
+glfwKeyModifierFromInt : Int -> Maybe GlfwKeyModifier
 glfwKeyModifierFromInt 1 = Just Shift
 glfwKeyModifierFromInt 2 = Just Control
 glfwKeyModifierFromInt 4 = Just Alt
@@ -386,7 +386,7 @@ glfwKeyModifierFromInt 8 = Just Super
 glfwKeyModifierFromInt _ = Nothing
 
 export
-glfwMouseButtonFromInt : Int -> Maybe GLFWMouseButton
+glfwMouseButtonFromInt : Int -> Maybe GlfwMouseButton
 glfwMouseButtonFromInt 0 = Just MouseButton1
 glfwMouseButtonFromInt 1 = Just MouseButton2
 glfwMouseButtonFromInt 2 = Just MouseButton3
@@ -816,7 +816,7 @@ getMouseButton win but
   = foreign FFI_C "glfwGetMouseButton" (Ptr -> Int -> IO Int) win but
 
 export
-isMouseButtonPressed : Window -> GLFWMouseButton -> IO Bool
+isMouseButtonPressed : Window -> GlfwMouseButton -> IO Bool
 isMouseButtonPressed win MouseButton1 = getMouseButton win 0 >>= \ret => pure (ret == glfwPress)
 isMouseButtonPressed win MouseButton2 = getMouseButton win 1 >>= \ret => pure (ret == glfwPress)
 isMouseButtonPressed win MouseButton3 = getMouseButton win 2 >>= \ret => pure (ret == glfwPress)
@@ -832,7 +832,7 @@ getKey win k
   = foreign FFI_C "glfwGetKey" (Ptr -> Int -> IO Int) win k
 
 export
-isKeyPressed : Window -> GLFWKey -> IO Bool
+isKeyPressed : Window -> GlfwKey -> IO Bool
 isKeyPressed win k = do
   let kInt = glfwKeyToInt k
   ret <- getKey win kInt

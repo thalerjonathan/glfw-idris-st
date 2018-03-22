@@ -4,14 +4,11 @@ import Control.ST
 import Graphics.UI.GLFW as GLFW
 
 public export
-data GLFWState = Initialized | HasWindow
-
-public export
-data GLFWInit = OK | Failed
+data GlfwState = Initialized | HasWindow
 
 public export
 interface Glfw (m : Type -> Type) where
-  GlfwContext : GLFWState -> Type
+  GlfwContext : GlfwState -> Type
 
   init      : ST m (Maybe Var) [addIfJust (GlfwContext Initialized)]
   terminate : (ctx : Var) -> ST m () [remove ctx (GlfwContext Initialized)]
@@ -65,8 +62,8 @@ interface Glfw (m : Type -> Type) where
   setMousePositionCallback : (ctx : Var) -> Ptr -> ST m () [ctx ::: GlfwContext HasWindow]
 
   getMousePosition     : (ctx : Var) -> ST m (Double, Double) [ctx ::: GlfwContext HasWindow]
-  isMouseButtonPressed : GLFWMouseButton -> (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
-  isKeyPressed         : GLFWKey -> (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
+  isMouseButtonPressed : GlfwMouseButton -> (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
+  isKeyPressed         : GlfwKey -> (ctx : Var) -> ST m Bool [ctx ::: GlfwContext HasWindow]
 
   destroyWindow       : (ctx : Var) 
                       -> ST m () [ctx ::: GlfwContext HasWindow :-> GlfwContext Initialized]
