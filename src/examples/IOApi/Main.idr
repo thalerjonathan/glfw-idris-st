@@ -31,7 +31,7 @@ main = do
         let disp = record 
           { displayOptions_width        = 800
           , displayOptions_height       = 600
-          , displayOptions_displayMode  = GLFW.WindowMode } GLFW.defaultDisplayOptions
+          , displayOptions_displayMode  = GLFW.FullscreenMode } GLFW.defaultDisplayOptions
         win <- GLFW.createWindow "glfw-idris-st createwindow example " disp
 
         glewInit
@@ -90,8 +90,8 @@ main = do
         let mglfwAct = GLFW.glfwKeyActionFromInt action
         keyCallbackAux mglfwKey mglfwAct
       where
-          keyCallbackAux :  Maybe GLFWKey
-                         -> Maybe GLFWKeyAction
+          keyCallbackAux :  Maybe GlfwKey
+                         -> Maybe GlfwKeyAction
                          -> IO ()
           keyCallbackAux (Just glfwKey) (Just Press)   = putStrLn "Press Key"
           keyCallbackAux (Just glfwKey) (Just Release) = putStrLn "Release Key"
@@ -121,8 +121,8 @@ main = do
         let mglfwAct = GLFW.glfwKeyActionFromInt action
         mouseButtonCallbackAux mglfwMb mglfwAct
       where
-        mouseButtonCallbackAux :  Maybe GLFWMouseButton
-                               -> Maybe GLFWKeyAction
+        mouseButtonCallbackAux :  Maybe GlfwMouseButton
+                               -> Maybe GlfwKeyAction
                                -> IO ()
         mouseButtonCallbackAux (Just glfwMb) (Just Press)   = putStrLn "Press MouseButton"
         mouseButtonCallbackAux (Just glfwMb) (Just Release) = putStrLn "Release MouseButton"
