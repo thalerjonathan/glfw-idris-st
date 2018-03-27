@@ -162,7 +162,7 @@ exampleInstallCallbacks ref ctx = do
 exampleGlfwApi :  (Glfw m, ConsoleIO m) 
                => IORef Integer
                -> ST m () []
-exampleGlfwApi ref = do
+exampleGlfwApi ref = with ST do
   putStr "Initializing GLFW... "
   (Just ctx) <- init | Nothing => putStrLn "failed"
   putStrLn "successful"
@@ -185,7 +185,7 @@ exampleGlfwApi ref = do
   liftToHasWindow (setSwapInterval 1) ctx
 
   putStr $ "Installing Callbacks... "
-  exampleInstallCallbacks ref
+  exampleInstallCallbacks ref ctx
   putStrLn "done!"
 
   putStr $ "Entering event-loop for 5 sec ... \n"
