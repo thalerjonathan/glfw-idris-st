@@ -14,7 +14,7 @@ eventLoop : (Glfw m, ConsoleIO m)
           -> (ctx : Var) 
           -> ST m () [ctx ::: GlfwContext {m} HasWindow]
 eventLoop sec ctx = do
-    t <- liftToHasWindow getTime ctx
+    t <- getTime ctx
     eventLoopAux t ctx
   where
     eventLoopAux :  (Glfw m, ConsoleIO m)
@@ -22,14 +22,14 @@ eventLoop sec ctx = do
                  -> (ctx : Var)
                  -> ST m () [ctx ::: GlfwContext {m} HasWindow]
     eventLoopAux t ctx = do
-      t' <- liftToHasWindow getTime ctx
+      t' <- getTime ctx
       if t' - t >= sec
         then pure ()
         else do
           ret <- isWindowOpen ctx
           if ret
             then do
-              liftToHasWindow pollEvents ctx
+              pollEvents ctx
 
               runIOHasWindow (do
                 glClear GL_COLOR_BUFFER_BIT
@@ -46,7 +46,7 @@ eventLoop sec ctx = do
                 glEnd) ctx
 
               swapBuffers ctx
-              liftToHasWindow (sleep 0.001) ctx
+              sleep 0.001 ctx
               eventLoopAux t ctx
             else pure ()
 
@@ -182,7 +182,7 @@ exampleGlfwApi ref = with ST do
   putStrLn "done!"
 
   showMouseCursor True ctx
-  liftToHasWindow (setSwapInterval 1) ctx
+  setSwapInterval 1 ctx
 
   putStr $ "Installing Callbacks... "
   exampleInstallCallbacks ref ctx

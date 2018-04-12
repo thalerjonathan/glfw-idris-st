@@ -11,29 +11,19 @@ interface Glfw (m : Type -> Type) where
   GlfwContext : GlfwState -> Type
 
   init      : ST m (Maybe Var) [addIfJust (GlfwContext Initialized)]
-  terminate : (ctx : Var) -> ST m () [remove ctx (GlfwContext Initialized)]
+  terminate : (ctx : Var) -> ST m () [remove ctx (GlfwContext s)]
 
-  getVersion      : (ctx : Var) -> ST m (Nat, Nat, Nat) [ctx ::: GlfwContext Initialized]
+  getVersion      : (ctx : Var) -> ST m (Nat, Nat, Nat) [ctx ::: GlfwContext s]
   -- TODO: should only be called with a current context
-  setSwapInterval : Nat -> (ctx : Var) -> ST m () [ctx ::: GlfwContext Initialized]
-  getTime         : (ctx : Var) -> ST m Double [ctx ::: GlfwContext Initialized]
-  pollEvents      : (ctx : Var) -> ST m () [ctx ::: GlfwContext Initialized]
-  sleep           : Double -> (ctx : Var) -> ST m () [ctx ::: GlfwContext Initialized]
-  primaryMonitor  : (ctx : Var) -> ST m Monitor [ctx ::: GlfwContext Initialized]
-  getVideoMode    : Monitor -> (ctx : Var) -> ST m GlfwVideomode [ctx ::: GlfwContext Initialized]
+  setSwapInterval : Nat -> (ctx : Var) -> ST m () [ctx ::: GlfwContext s]
+  getTime         : (ctx : Var) -> ST m Double [ctx ::: GlfwContext s]
+  pollEvents      : (ctx : Var) -> ST m () [ctx ::: GlfwContext s]
+  sleep           : Double -> (ctx : Var) -> ST m () [ctx ::: GlfwContext s]
+  primaryMonitor  : (ctx : Var) -> ST m Monitor [ctx ::: GlfwContext s]
+  getVideoMode    : Monitor -> (ctx : Var) -> ST m GlfwVideomode [ctx ::: GlfwContext s]
 
-  ||| Allows to run an action which depends on an Initialized GlfwContext in
-  |||  context with HasWindow as well because all those functions do not need
-  |||  a Window but can be called when there exists a Window as well. If at some
-  |||  point a function in the Initialized state is not allowed to run from
-  |||  within a HasWindow Context (I don't see why this should be ever the case...)
-  |||  then one must introduce another state which distinguishes between these
-  |||  functions.
-  |||  Note that it is not possible to call createWindow using this function
-  liftToHasWindow :  ((ctx : Var) -> ST m a [ctx ::: GlfwContext Initialized])
-                  -> (ctx : Var) 
-                  -> ST m a [ctx ::: GlfwContext HasWindow]
-
+  ||| use this to run an IO action within any GlfwContext
+  runIOAny : IO a -> (ctx : Var) -> ST m a [ctx ::: GlfwContext s]
   ||| Use this to run an IO action within an Initialized GlfwContext 
   runIOInit : IO a -> (ctx : Var) -> ST m a [ctx ::: GlfwContext Initialized]
   ||| Use this to run an IO action within a GlfwContext with a Window
@@ -102,8 +92,8 @@ Glfw IO where
   getVideoMode mon ctx = do
     lift $ GLFW.getVideoMode mon
 
-  liftToHasWindow f ctx = do
-    ret <- f ctx
+  runIOAny f ctx = do
+    ret <- lift $ f
     pure ret
 
   runIOInit f ctx = do
@@ -111,7 +101,8 @@ Glfw IO where
     pure ret
 
   runIOHasWindow f ctx = do
-    liftToHasWindow (runIOInit f) ctx
+    ret <- lift $ f
+    pure ret
 
   createWindow title opts ctx = do
     win <- lift $ GLFW.createWindow title opts
