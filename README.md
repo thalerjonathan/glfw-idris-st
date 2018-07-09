@@ -2,7 +2,7 @@
 A new library providing GLFW bindings for Idris. In contrast to the already existing glfw-idris https://github.com/eckart/glfw-idris library,
 which is using Algebraic Effects, this one is using the ST approach as introduced in the ST tutorial http://docs.idris-lang.org/en/latest/st/index.html and Edwin Bradys paper https://www.idris-lang.org/drafts/sms.pdf.
 
-### Idris version: 1.2
+### Idris versions: 1.2, 1.3
 
 ### Library Dependencies
 - glfw3: for loading the OpenGL functions on the respective system
